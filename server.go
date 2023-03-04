@@ -54,6 +54,9 @@ type Upgrader struct {
 	// handshake response).
 	Subprotocols []string
 
+	// The handler that returns the selected protocol.
+	HandleProtocols func(p []string) string
+
 	// Error specifies the function for generating HTTP error responses. If Error
 	// is nil, then http.Error is used to generate the HTTP response.
 	Error func(w http.ResponseWriter, r *http.Request, status int, reason error)
@@ -99,7 +102,9 @@ func checkSameOrigin(r *http.Request) bool {
 }
 
 func (u *Upgrader) selectSubprotocol(r *http.Request, responseHeader http.Header) string {
-	if u.Subprotocols != nil {
+	if u.HandleProtocols != nil {
+		return u.HandleProtocols(Subprotocols(r))
+	} else if u.Subprotocols != nil {
 		clientProtocols := Subprotocols(r)
 		for _, serverProtocol := range u.Subprotocols {
 			for _, clientProtocol := range clientProtocols {
