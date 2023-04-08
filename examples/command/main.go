@@ -14,7 +14,7 @@ import (
 	"os/exec"
 	"time"
 
-	"github.com/gorilla/websocket"
+	websocket "github.com/frzi/gorilla-websocket"
 )
 
 var (
